@@ -5,34 +5,53 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import ProductCatalog from "./pages/ProductCatalog";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderTracking from "./pages/OrderTracking";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import Profile from "./pages/Profile";
+import Wishlist from "./pages/Wishlist";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
+      {/* Public routes */}
       <Route path={"/"} component={Home} />
+      <Route path={"/products"} component={ProductCatalog} />
+      <Route path={"/products/:id"} component={ProductDetail} />
+      <Route path={"/cart"} component={Cart} />
+      <Route path={"/wishlist"} component={Wishlist} />
+      
+      {/* Protected routes */}
+      <Route path={"/checkout"} component={Checkout} />
+      <Route path={"/orders"} component={OrderTracking} />
+      <Route path={"/profile"} component={Profile} />
+      
+      {/* Admin routes */}
+      <Route path={"/admin/*"} component={AdminDashboard} />
+      
+      {/* Seller routes */}
+      <Route path={"/seller/*"} component={SellerDashboard} />
+      
+      {/* 404 */}
       <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <div className="min-h-screen bg-background text-foreground" dir="rtl">
+            <Router />
+          </div>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
