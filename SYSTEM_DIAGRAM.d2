@@ -1,0 +1,214 @@
+direction: right
+
+# Saudi Ecommerce Platform - System Architecture Diagram
+
+browser: Browser {
+  style: {
+    fill: "#E3F2FD"
+  }
+}
+
+frontend: Frontend Layer {
+  style: {
+    fill: "#BBDEFB"
+  }
+  
+  react: React 19 App {
+    style: {
+      fill: "#64B5F6"
+    }
+  }
+  
+  pages: Pages {
+    home: Home Page
+    catalog: Product Catalog
+    detail: Product Detail
+    cart: Shopping Cart
+    checkout: Checkout
+    orders: Order Tracking
+    profile: User Profile
+    loyalty: Loyalty Points
+    admin: Admin Dashboard
+    seller: Seller Dashboard
+    recommendations: Recommendations
+  }
+  
+  components: UI Components {
+    shadcn: shadcn/ui
+    tailwind: Tailwind CSS
+    rtl: RTL Support
+  }
+}
+
+api_layer: API Layer {
+  style: {
+    fill: "#C8E6C9"
+  }
+  
+  trpc: tRPC Framework {
+    style: {
+      fill: "#81C784"
+    }
+  }
+  
+  routers: API Routers {
+    auth: Authentication
+    products: Products
+    cart: Cart
+    orders: Orders
+    loyalty: Loyalty
+    sellers: Sellers
+    admin: Admin
+    recommendations: Recommendations
+  }
+}
+
+backend: Backend Layer {
+  style: {
+    fill: "#FFE0B2"
+  }
+  
+  express: Express Server {
+    style: {
+      fill: "#FFB74D"
+    }
+  }
+  
+  db_layer: Database Layer {
+    drizzle: Drizzle ORM
+    queries: Query Helpers
+  }
+  
+  auth: Authentication {
+    oauth: Manus OAuth
+    session: Session Management
+  }
+}
+
+database: Data Layer {
+  style: {
+    fill: "#F8BBD0"
+  }
+  
+  mysql: MySQL Database {
+    style: {
+      fill: "#EC407A"
+    }
+  }
+  
+  tables: Database Tables {
+    users: Users & Auth
+    products: Products & Categories
+    orders: Orders & Items
+    sellers: Sellers & Inventory
+    loyalty: Loyalty Points
+    analytics: Analytics
+    history: Browsing & Purchase History
+  }
+}
+
+storage: Storage Layer {
+  style: {
+    fill: "#D1C4E9"
+  }
+  
+  s3: S3 Storage {
+    style: {
+      fill: "#9575CD"
+    }
+  }
+  
+  files: File Types {
+    images: Product Images
+    documents: Documents
+    media: Media Files
+  }
+}
+
+features: Feature Modules {
+  style: {
+    fill: "#C0CAF5"
+  }
+  
+  shopping: Shopping {
+    cart: Cart Management
+    wishlist: Wishlist
+    checkout: Checkout Process
+  }
+  
+  orders: Order Management {
+    tracking: Order Tracking
+    history: Order History
+    status: Status Updates
+  }
+  
+  loyalty: Loyalty System {
+    points: Points Earning
+    redemption: Points Redemption
+    history: Transaction History
+  }
+  
+  ai: AI Features {
+    browsing: Browsing History
+    purchase: Purchase History
+    recommendations: Personalized Recommendations
+  }
+  
+  multi_vendor: Multi-Vendor {
+    sellers: Seller Management
+    products: Seller Products
+    dashboard: Seller Dashboard
+    commission: Commission Tracking
+  }
+  
+  admin: Admin Features {
+    analytics: Analytics Dashboard
+    users: User Management
+    products: Product Management
+    orders: Order Management
+    sellers: Seller Management
+  }
+}
+
+payments: Payment Processing {
+  style: {
+    fill: "#B2DFDB"
+  }
+  
+  methods: Payment Methods {
+    mada: Mada Card
+    credit: Credit Card
+    stc: STC Pay
+  }
+}
+
+# Connections
+browser -> frontend: HTTPS
+frontend.react -> frontend.pages: Renders
+frontend.pages -> frontend.components: Uses
+frontend.react -> api_layer: tRPC Calls
+
+api_layer.trpc -> api_layer.routers: Routes
+api_layer.routers -> backend.express: Procedures
+
+backend.express -> backend.db_layer: Queries
+backend.db_layer -> database.mysql: ORM
+backend.express -> backend.auth: Validates
+
+backend.auth -> backend.oauth: OAuth Flow
+backend.db_layer -> storage.s3: File Operations
+
+database.mysql -> database.tables: Stores
+database.tables -> features: Powers
+
+features.shopping -> payments: Payment
+features.orders -> database.tables: Persists
+features.loyalty -> database.tables: Tracks
+features.ai -> database.tables: Learns
+features.multi_vendor -> database.tables: Manages
+features.admin -> database.tables: Controls
+
+# Styling
+backend.express.style.fill: "#FFA726"
+database.mysql.style.fill: "#EF5350"
+storage.s3.style.fill: "#AB47BC"
