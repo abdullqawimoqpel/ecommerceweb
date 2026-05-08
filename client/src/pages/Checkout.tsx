@@ -25,11 +25,12 @@ export default function Checkout() {
   const createOrderMutation = trpc.orders.create.useMutation();
   const loyaltyQuery = trpc.loyalty.getBalance.useQuery();
 
-  const cartTotal = cartQuery.data?.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) || 0;
+  const cartTotal = cartQuery.data?.reduce((sum: number, item: any) => sum + ((item.price || 0) * (item.quantity || 0)), 0) || 0;
   const shippingCost = 30;
-  const tax = cartTotal * 0.15;
-  const loyaltyDiscount = usePoints ? (loyaltyQuery.data || 0) * 0.1 : 0;
-  const finalTotal = cartTotal + shippingCost + tax - loyaltyDiscount;
+  const tax = (cartTotal || 0) * 0.15;
+  const loyaltyPoints = typeof loyaltyQuery.data === 'object' && loyaltyQuery.data !== null && 'points' in loyaltyQuery.data ? (loyaltyQuery.data as any).points : 0;
+  const loyaltyDiscount = usePoints ? (loyaltyPoints || 0) * 0.1 : 0;
+  const finalTotal = (cartTotal || 0) + shippingCost + (tax || 0) - (loyaltyDiscount || 0);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -48,7 +49,7 @@ export default function Checkout() {
         shippingAddressId: 1,
         billingAddressId: 1,
         paymentMethod: paymentMethod as any,
-        loyaltyPointsToRedeem: usePoints ? (loyaltyQuery.data || 0) : 0,
+        loyaltyPointsToRedeem: usePoints ? loyaltyPoints : 0,
       });
       alert("تم إنشاء الطلب بنجاح!");
       window.location.href = `/orders`;
@@ -201,7 +202,7 @@ export default function Checkout() {
                   </label>
                 </div>
 
-                {loyaltyQuery.data && loyaltyQuery.data?.points > 0 && (
+                {loyaltyPoints > 0 && (
                   <Card className="p-4 mb-6 bg-accent/10">
                     <label className="flex items-center cursor-pointer">
                       <input
@@ -211,7 +212,7 @@ export default function Checkout() {
                         className="ml-3"
                       />
                       <span className="font-semibold">
-                        استخدام {loyaltyQuery.data?.points} نقطة ولاء (خصم {((loyaltyQuery.data || 0) * 0.1).toFixed(2)} ر.س)
+                        استخدام {loyaltyPoints} نقطة ولاء (خصم {((loyaltyPoints || 0) * 0.1).toFixed(2)} ر.س)
                       </span>
                     </label>
                   </Card>
