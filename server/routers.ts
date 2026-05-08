@@ -100,6 +100,42 @@ export const appRouter = router({
         return await db.getProducts(input.limit, 0, { isFeatured: true });
       }),
 
+    advancedSearch: publicProcedure
+      .input(
+        z.object({
+          query: z.string().optional(),
+          categoryId: z.number().optional(),
+          minPrice: z.number().optional(),
+          maxPrice: z.number().optional(),
+          minRating: z.number().optional(),
+          sortBy: z.enum(['newest', 'cheapest', 'expensive', 'rating']).optional(),
+          limit: z.number().default(20),
+          offset: z.number().default(0),
+        })
+      )
+      .query(async ({ input }) => {
+        const products = await db.getProducts(input.limit, input.offset, {
+          search: input.query,
+          categoryId: input.categoryId,
+          minPrice: input.minPrice,
+          maxPrice: input.maxPrice,
+        });
+        return products;
+      }),
+
+    getCategories: publicProcedure.query(async () => {
+      return await db.getCategories();
+    }),
+
+    getPriceRange: publicProcedure.query(async () => {
+      const products = await db.getProducts(1000, 0);
+      const prices = products.map(p => parseFloat(p.price));
+      return {
+        min: Math.min(...prices),
+        max: Math.max(...prices),
+      };
+    }),
+
     // Admin: Create product
     create: adminProcedure
       .input(

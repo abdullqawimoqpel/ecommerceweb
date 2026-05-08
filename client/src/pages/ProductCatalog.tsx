@@ -6,6 +6,7 @@ import { Loader2, ShoppingCart, Heart, Star, Search } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { useSearchParams } from "wouter";
+import FilterPanel, { FilterState } from "@/components/FilterPanel";
 
 export default function ProductCatalog() {
   const [searchParams] = useSearchParams();
@@ -20,10 +21,13 @@ export default function ProductCatalog() {
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  const productsQuery = trpc.products.list.useQuery({
+  const productsQuery = trpc.products.advancedSearch.useQuery({
+    query: filters.search,
+    categoryId: filters.categoryId,
+    minPrice: filters.minPrice,
+    maxPrice: filters.maxPrice,
     limit: 20,
     offset: 0,
-    ...filters,
   });
 
   const categoriesQuery = trpc.categories.list.useQuery();
@@ -83,91 +87,17 @@ export default function ProductCatalog() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-20">
-              <h3 className="text-lg font-bold mb-4">التصفية</h3>
-
-              {/* Search */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold mb-2">البحث</label>
-                <div className="relative">
-                  <Input
-                    type="text"
-                    placeholder="ابحث عن منتج..."
-                    value={filters.search}
-                    onChange={handleSearchChange}
-                    className="pl-10"
-                  />
-                  <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                </div>
-              </div>
-
-              {/* Categories */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold mb-3">الفئات</label>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => handleCategoryChange(undefined)}
-                    className={`block w-full text-right text-sm p-2 rounded hover:bg-muted transition-colors ${
-                      !filters.categoryId ? "bg-primary text-primary-foreground" : ""
-                    }`}
-                  >
-                    جميع الفئات
-                  </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => handleCategoryChange(category.id)}
-                      className={`block w-full text-right text-sm p-2 rounded hover:bg-muted transition-colors ${
-                        filters.categoryId === category.id ? "bg-primary text-primary-foreground" : ""
-                      }`}
-                    >
-                      {category.nameAr || category.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price Range */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold mb-3">نطاق السعر</label>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => handlePriceChange(undefined, undefined)}
-                    className="block w-full text-right text-sm p-2 rounded hover:bg-muted transition-colors"
-                  >
-                    الكل
-                  </button>
-                  <button
-                    onClick={() => handlePriceChange(0, 100)}
-                    className="block w-full text-right text-sm p-2 rounded hover:bg-muted transition-colors"
-                  >
-                    أقل من 100 ر.س
-                  </button>
-                  <button
-                    onClick={() => handlePriceChange(100, 500)}
-                    className="block w-full text-right text-sm p-2 rounded hover:bg-muted transition-colors"
-                  >
-                    100 - 500 ر.س
-                  </button>
-                  <button
-                    onClick={() => handlePriceChange(500, 1000)}
-                    className="block w-full text-right text-sm p-2 rounded hover:bg-muted transition-colors"
-                  >
-                    500 - 1000 ر.س
-                  </button>
-                  <button
-                    onClick={() => handlePriceChange(1000, undefined)}
-                    className="block w-full text-right text-sm p-2 rounded hover:bg-muted transition-colors"
-                  >
-                    أكثر من 1000 ر.س
-                  </button>
-                </div>
-              </div>
-
-              <Button className="w-full" onClick={() => setFilters({ categoryId: undefined, minPrice: undefined, maxPrice: undefined, search: "" })}>
-                إعادة تعيين
-              </Button>
-            </Card>
+            <FilterPanel
+              onFilterChange={(newFilters: FilterState) => {
+                setFilters(prev => ({
+                  ...prev,
+                  categoryId: newFilters.categoryId,
+                  minPrice: newFilters.minPrice,
+                  maxPrice: newFilters.maxPrice,
+                }))
+              }}
+              onClearFilters={() => setFilters({ categoryId: undefined, minPrice: undefined, maxPrice: undefined, search: "" })}
+            />
           </div>
 
           {/* Products Grid */}

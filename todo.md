@@ -51,6 +51,22 @@
 - [x] Product reviews and ratings display
 - [x] Add to cart and wishlist buttons
 
+## Advanced Search & Filtering System
+- [x] Backend: Add advanced search API endpoint
+- [x] Backend: Add filtering by category, price, rating
+- [x] Backend: Add sorting options (newest, cheapest, most expensive, best rated)
+- [x] Backend: Implement full-text search
+- [x] Frontend: Create FilterPanel component
+- [x] Frontend: Create SearchBar component with autocomplete
+- [x] Frontend: Add price range slider
+- [x] Frontend: Add category checkboxes
+- [x] Frontend: Add rating filter
+- [x] Frontend: Add sorting dropdown
+- [ ] Frontend: Implement filter persistence (localStorage)
+- [x] Frontend: Add "Clear Filters" button
+- [x] Frontend: Display active filters with remove option
+- [x] Frontend: Show result count
+
 ## Shopping Cart & Wishlist
 - [x] Cart page with item list
 - [x] Update quantity functionality
